@@ -1,21 +1,30 @@
 export default async function handler(req, res) {
 
   try {
-    const body = typeof req.body === "string"
-      ? JSON.parse(req.body)
-      : req.body;
+    let body = req.body;
+
+    // body 파싱 (핵심)
+    if (typeof body === "string") {
+      body = JSON.parse(body);
+    }
 
     const idea = body?.idea;
 
     if (!idea) {
-      return res.status(400).json({ error: "No idea" });
+      return res.status(200).json({
+        url: "https://www.google.com"
+      });
     }
 
-    const url = `https://www.google.com/search?q=${encodeURIComponent(idea)}`;
-
-    return res.status(200).json({ url });
+    return res.status(200).json({
+      url: `https://www.google.com/search?q=${encodeURIComponent(idea)}`
+    });
 
   } catch (err) {
-    return res.status(500).json({ error: "Server error" });
+    console.log("SERVER ERROR:", err);
+
+    return res.status(200).json({
+      url: "https://www.google.com"
+    });
   }
 }
