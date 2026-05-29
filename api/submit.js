@@ -53,7 +53,7 @@ CTA: ...
     const text = data.choices?.[0]?.message?.content || "No result";
 
     // 👉 결과를 URL로 넘김
-    const url = `https://nextep-api.vercel.app/result?data=${encodeURIComponent(text)}`;
+    const url = `https://nextep-kr.imweb.me/index?preview_mode=1/?data=${encodeURIComponent(text)}`;
 
     return res.status(200).json({ url });
 
