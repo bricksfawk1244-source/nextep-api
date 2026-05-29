@@ -11,6 +11,7 @@ export default async function handler(req, res) {
 
   try {
     let body = req.body;
+
     if (typeof body === "string") {
       body = JSON.parse(body);
     }
@@ -33,35 +34,32 @@ export default async function handler(req, res) {
           },
           {
             role: "user",
-            content: `
-Create a simple landing page for this idea:
-
-${idea}
-
-Return ONLY in this format:
+            content: `Create landing page copy for: ${idea}
+Return format:
 TITLE: ...
 DESC: ...
-CTA: ...
-`
+CTA: ...`
           }
         ]
       })
     });
 
     const data = await aiRes.json();
+    let text = data.choices?.[0]?.message?.content;
 
-    const text = data.choices?.[0]?.message?.content || "No result";
+    // ❗ GPT 실패 대비
+    if (!text) {
+      text = `TITLE: ${idea}\nDESC: 간단한 서비스 설명입니다.\nCTA: 시작하기`;
+    }
 
-    // 👉 결과를 URL로 넘김
-    const url = `https://nextep-kr.imweb.me/index?preview_mode=1/?data=${encodeURIComponent(text)}`;
+    // 🔥 핵심 https://nextep-kr.imweb.me/index?preview_mode=1
+    const url = `https://nextep-kr.imweb.me/?data=${encodeURIComponent(text)}`;
 
     return res.status(200).json({ url });
 
   } catch (err) {
-    console.log(err);
-
     return res.status(200).json({
-      url: "https://www.google.com"
+      url: "https://nextep-kr.imweb.me/?data=ERROR"
     });
   }
 }
